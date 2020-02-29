@@ -31,7 +31,7 @@
             <div class="col-md-4">
                 <div class="withdraw status">
                     <h5>Withdraw</h5>
-                    <h2>$00</h2>
+                    <h2>$ <span id="currentWithdraw">00</span> </h2>
                 </div>
             </div>
             <div class="col-md-4">
@@ -73,22 +73,65 @@
 
         // Deposit button event handler
         document.getElementById("deposit-btn").addEventListener( "click", () => {
-            const depositAmount = parseFloat( document.getElementById("depositAmount").value );
-            const currentDeposit = parseFloat( document.getElementById("currentDeposit").innerText );
-            const newDeposit = currentDeposit + depositAmount;
-            document.getElementById("currentDeposit").innerText = newDeposit;
-            document.getElementById("depositAmount").value = "";
-
-            // Update balance
-            const currentBalance = parseFloat(document.getElementById("currentBalance").innerText);
-            const newBalance = currentBalance + depositAmount;
-            document.getElementById("currentBalance").innerHTML = newBalance;
-        } )
+            const depositAmount = getInputNumber("depositAmount");
+            updateSpanText("currentDeposit", depositAmount);
+            flushInputField("depositAmount");
+            updateSpanText("currentBalance", depositAmount);
+        } );
 
         // Withdraw button event handler
         document.getElementById("withdraw-btn").addEventListener( "click", () => {
+            
+            const withdrawAmount = getInputNumber("withdrawAmount");
+            const currentWithdraw = getInnerTextInNumber("currentWithdraw");
+            const newWithdraw = withdrawAmount + currentWithdraw;
+            const currentBalance = getInnerTextInNumber("currentBalance");
 
-        } )
+            if( withdrawAmount <= currentBalance ) {
+                // Update withdraw
+                updateInnertText("currentWithdraw", newWithdraw);
+
+                // Update balance
+                const newBalance = currentBalance - withdrawAmount;
+                updateInnertText("currentBalance", newBalance);
+
+                // Flush withdraw input field
+                flushInputField("withdrawAmount");
+            }else {
+                alert("You don't have sufficient balance to withdraw!");
+                flushInputField("withdrawAmount");
+            }
+        } );
+
+        // Function to retrieve innerText in integer datatype
+        function getInnerTextInNumber(id) {
+            const number = parseFloat(document.getElementById(id).innerText);
+            return number;
+        }
+
+        // Function to update innerText
+        function updateInnertText(id, newValue) {
+            document.getElementById(id).innerText = newValue;
+        }
+
+        // Function to flush input field
+        function flushInputField(id){
+            document.getElementById(id).value = "";
+        }
+
+        // Function to get number from input
+        function getInputNumber(id) {
+            const number = parseFloat( document.getElementById(id).value );
+            return number;
+        }
+
+        // Function to update Deposit and Balance
+        function updateSpanText(id, depositAmount){
+            const current = parseFloat( document.getElementById(id).innerText );
+            const newDeposit = current + depositAmount;
+            document.getElementById(id).innerText = newDeposit;
+        }
+
     </script>
 </body>
 </html>
